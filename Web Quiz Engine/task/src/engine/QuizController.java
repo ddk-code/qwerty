@@ -16,7 +16,7 @@ public class QuizController {
     }
 
     @PostMapping
-    public Result putAnswer(@RequestBody int answer) {
+    public Result putAnswer(@RequestParam("answer")  int answer) {
         if (answer == 2) {
             return new Result(true, "Congratulations, you're right!");
         }
