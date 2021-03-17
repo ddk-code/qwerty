@@ -1,0 +1,193 @@
+type: edu
+custom_name: stage1
+files:
+- name: build.gradle
+  visible: true
+  text: |
+    plugins {
+        id 'org.springframework.boot' version '2.2.2.RELEASE'
+        id 'java'
+    }
+
+    apply plugin: 'io.spring.dependency-management'
+
+    sourceCompatibility = 11
+
+    repositories {
+        mavenCentral()
+    }
+
+    sourceSets.main.resources.srcDirs = ["src/resources"]
+
+    dependencies {
+        implementation 'org.springframework.boot:spring-boot-starter'
+        implementation 'org.springframework.boot:spring-boot-starter-actuator'
+        compile("org.springframework.boot:spring-boot-starter-web")
+    }
+  learner_created: false
+- name: src/engine/WebQuizEngine.java
+  visible: true
+  text: |
+    package engine;
+
+    import org.springframework.boot.SpringApplication;
+    import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+    @SpringBootApplication
+    public class WebQuizEngine {
+
+        public static void main(String[] args) {
+            SpringApplication.run(WebQuizEngine.class, args);
+        }
+
+    }
+  learner_created: false
+- name: src/resources/application.properties
+  visible: true
+  text: |
+    server.port=8889
+    management.endpoints.web.exposure.include=*
+    management.endpoint.shutdown.enabled=true
+  learner_created: false
+- name: test/tests/WebQuizEngineTest.java
+  visible: false
+  text: |
+    package tests;
+
+    import engine.WebQuizEngine;
+    import org.hyperskill.hstest.dynamic.input.DynamicTesting;
+    import org.hyperskill.hstest.dynamic.input.DynamicTestingMethod;
+    import org.hyperskill.hstest.exception.outcomes.WrongAnswer;
+    import org.hyperskill.hstest.mocks.web.request.HttpRequest;
+    import org.hyperskill.hstest.mocks.web.response.HttpResponse;
+    import org.hyperskill.hstest.stage.SpringTest;
+    import org.hyperskill.hstest.testcase.CheckResult;
+
+    import java.util.Map;
+
+    import static org.hyperskill.hstest.testing.expect.Expectation.expect;
+    import static org.hyperskill.hstest.testing.expect.json.JsonChecker.*;
+
+    public class WebQuizEngineTest extends SpringTest {
+        public WebQuizEngineTest() {
+            super(WebQuizEngine.class);
+        }
+
+        static void checkStatusCode(HttpResponse resp, int status) {
+            if (resp.getStatusCode() != status) {
+                throw new WrongAnswer(
+                    resp.getRequest().getMethod() + " " +
+                        resp.getRequest().getLocalUri() +
+                        " should respond with status code " + status + ", " +
+                        "responded: " + resp.getStatusCode() + "\n\n" +
+                        "Response body:\n\n" + resp.getContent()
+                );
+            }
+        }
+
+        @DynamicTestingMethod
+        public DynamicTesting[] dt = new DynamicTesting[] {
+            this::checkQuizReceived,
+            () -> checkQuizSuccess("2", true),
+            () -> checkQuizSuccess("1", false)
+        };
+
+        private CheckResult checkQuizReceived() {
+            String url = "/api/quiz";
+
+            HttpResponse resp = get(url).send();
+            checkStatusCode(resp, 200);
+
+            expect(resp.getContent()).asJson().check(
+                isObject()
+                    .value("title", isString())
+                    .value("text", isString())
+                    .value("options", isArray(4, isString()))
+            );
+
+            return CheckResult.correct();
+        }
+
+        private CheckResult checkQuizSuccess(String answerSent, boolean shouldResponse) {
+            String url = "/api/quiz";
+
+            HttpRequest req = post(url, Map.of("answer", answerSent));
+            HttpResponse resp = req.send();
+
+            checkStatusCode(resp, 200);
+
+            expect(resp.getContent()).asJson().check(
+                isObject()
+                    .value("success", shouldResponse)
+                    .value("feedback", isString())
+            );
+
+            return CheckResult.correct();
+        }
+    }
+  learner_created: false
+- name: src/engine/Quiz.java
+  visible: true
+  learner_created: true
+- name: src/engine/Answer.java
+  visible: true
+  learner_created: true
+- name: src/engine/QuizController.java
+  visible: true
+  learner_created: true
+- name: src/engine/Result.java
+  visible: true
+  learner_created: true
+feedback_link: https://hyperskill.org/projects/91/stages/504/implement#comment
+status: Failed
+feedback:
+  message: "Exception in test #1\n\nCannot start Spring application\nMake sure that\
+    \ no other Spring application is running at the moment.\n\norg.springframework.boot.web.server.PortInUseException:\
+    \ Port 8889 is already in use\n\tat org.springframework.boot.web.embedded.tomcat.TomcatWebServer.start(TomcatWebServer.java:213)\n\
+    \tat org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.startWebServer(ServletWebServerApplicationContext.java:297)\n\
+    \tat org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.finishRefresh(ServletWebServerApplicationContext.java:163)\n\
+    \tat org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:553)\n\
+    \tat org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.refresh(ServletWebServerApplicationContext.java:141)\n\
+    \tat org.springframework.boot.SpringApplication.refresh(SpringApplication.java:747)\n\
+    \tat org.springframework.boot.SpringApplication.refreshContext(SpringApplication.java:397)\n\
+    \tat org.springframework.boot.SpringApplication.run(SpringApplication.java:315)\n\
+    \tat org.springframework.boot.SpringApplication.run(SpringApplication.java:1226)\n\
+    \tat org.springframework.boot.SpringApplication.run(SpringApplication.java:1215)\n\
+    \tat engine.WebQuizEngine.main(WebQuizEngine.java:10)\n\nPlease find below the\
+    \ output of your program during this failed test.\n\n---\n\n\n  .   ____     \
+    \     _            __ _ _\n /\\\\ / ___&#39;_ __ _ _(_)_ __  __ _ \\ \\ \\ \\\n\
+    ( ( )\\___ | &#39;_ | &#39;_| | &#39;_ \\/ _` | \\ \\ \\ \\\n \\\\/  ___)| |_)|\
+    \ | | | | || (_| |  ) ) ) )\n  &#39;  |____| .__|_| |_|_| |_\\__, | / / / /\n\
+    \ =========|_|==============|___/=/_/_/_/\n :: Spring Boot ::        (v2.2.2.RELEASE)\n\
+    \n2021-03-16 15:02:01.719  INFO 1232290 --- [    Test worker] engine.WebQuizEngine\
+    \                     : Starting WebQuizEngine on ddk-GL703VD with PID 1232290\
+    \ (started by ddk in /home/ddk/IdeaProjects/Web Quiz Engine/Web Quiz Engine/task)\n\
+    2021-03-16 15:02:01.722  INFO 1232290 --- [    Test worker] engine.WebQuizEngine\
+    \                     : No active profile set, falling back to default profiles:\
+    \ default\n2021-03-16 15:02:02.628  INFO 1232290 --- [    Test worker] o.s.b.w.embedded.tomcat.TomcatWebServer\
+    \  : Tomcat initialized with port(s): 8889 (http)\n2021-03-16 15:02:02.638  INFO\
+    \ 1232290 --- [    Test worker] o.apache.catalina.core.StandardService   : Starting\
+    \ service [Tomcat]\n2021-03-16 15:02:02.638  INFO 1232290 --- [    Test worker]\
+    \ org.apache.catalina.core.StandardEngine  : Starting Servlet engine: [Apache\
+    \ Tomcat/9.0.29]\n2021-03-16 15:02:02.725  INFO 1232290 --- [    Test worker]\
+    \ o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext\n\
+    2021-03-16 15:02:02.725  INFO 1232290 --- [    Test worker] o.s.web.context.ContextLoader\
+    \            : Root WebApplicationContext: initialization completed in 956 ms\n\
+    2021-03-16 15:02:02.982  INFO 1232290 --- [    Test worker] o.s.s.concurrent.ThreadPoolTaskExecutor\
+    \  : Initializing ExecutorService &#39;applicationTaskExecutor&#39;\n2021-03-16\
+    \ 15:02:03.140  INFO 1232290 --- [    Test worker] o.s.b.a.e.web.EndpointLinksResolver\
+    \      : Exposing 14 endpoint(s) beneath base path &#39;/actuator&#39;\n2021-03-16\
+    \ 15:02:03.171  INFO 1232290 --- [    Test worker] o.apache.catalina.core.StandardService\
+    \   : Stopping service [Tomcat]\n2021-03-16 15:02:03.184  INFO 1232290 --- [ \
+    \   Test worker] ConditionEvaluationReportLoggingListener : \n\nError starting\
+    \ ApplicationContext. To display the conditions report re-run your application\
+    \ with &#39;debug&#39; enabled.\n2021-03-16 15:02:03.186 ERROR 1232290 --- [ \
+    \   Test worker] o.s.b.d.LoggingFailureAnalysisReporter   : \n\n***************************\n\
+    APPLICATION FAILED TO START\n***************************\n\nDescription:\n\nWeb\
+    \ server failed to start. Port 8889 was already in use.\n\nAction:\n\nIdentify\
+    \ and stop the process that&#39;s listening on port 8889 or configure this application\
+    \ to listen on another port.\n\n2021-03-16 15:02:03.189  INFO 1232290 --- [  \
+    \  Test worker] o.s.s.concurrent.ThreadPoolTaskExecutor  : Shutting down ExecutorService\
+    \ &#39;applicationTaskExecutor&#39;"
+  time: Tue, 16 Mar 2021 12:02:03 UTC
+record: -1

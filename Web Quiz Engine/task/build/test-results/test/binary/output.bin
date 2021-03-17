@@ -1,0 +1,39 @@
+[1;31m
+Start test 1[0m
+
+(  .   ____          _            __ _ _
+) /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+*( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
++ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+*  '  |____| .__|_| |_|_| |_\__, | / / / /
+) =========|_|==============|___/=/_/_/_/
++ :: Spring Boot ::        (v2.2.2.RELEASE)
+
+Ó2021-03-16 15:02:01.719  INFO 1232290 --- [    Test worker] engine.WebQuizEngine                     : Starting WebQuizEngine on ddk-GL703VD with PID 1232290 (started by ddk in /home/ddk/IdeaProjects/Web Quiz Engine/Web Quiz Engine/task)
+®2021-03-16 15:02:01.722  INFO 1232290 --- [    Test worker] engine.WebQuizEngine                     : No active profile set, falling back to default profiles: default
+î2021-03-16 15:02:02.628  INFO 1232290 --- [    Test worker] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port(s): 8889 (http)
+Å2021-03-16 15:02:02.638  INFO 1232290 --- [    Test worker] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+ó2021-03-16 15:02:02.638  INFO 1232290 --- [    Test worker] org.apache.catalina.core.StandardEngine  : Starting Servlet engine: [Apache Tomcat/9.0.29]
+ö2021-03-16 15:02:02.725  INFO 1232290 --- [    Test worker] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+¶2021-03-16 15:02:02.725  INFO 1232290 --- [    Test worker] o.s.web.context.ContextLoader            : Root WebApplicationContext: initialization completed in 956 ms
+û2021-03-16 15:02:02.982  INFO 1232290 --- [    Test worker] o.s.s.concurrent.ThreadPoolTaskExecutor  : Initializing ExecutorService 'applicationTaskExecutor'
+ù2021-03-16 15:02:03.140  INFO 1232290 --- [    Test worker] o.s.b.a.e.web.EndpointLinksResolver      : Exposing 14 endpoint(s) beneath base path '/actuator'
+Å2021-03-16 15:02:03.171  INFO 1232290 --- [    Test worker] o.apache.catalina.core.StandardService   : Stopping service [Tomcat]
+h2021-03-16 15:02:03.184  INFO 1232290 --- [    Test worker] ConditionEvaluationReportLoggingListener : 
+
+rError starting ApplicationContext. To display the conditions report re-run your application with 'debug' enabled.
+h2021-03-16 15:02:03.186 ERROR 1232290 --- [    Test worker] o.s.b.d.LoggingFailureAnalysisReporter   : 
+
+***************************
+APPLICATION FAILED TO START
+***************************
+
+Description:
+
+:Web server failed to start. Port 8889 was already in use.
+
+Action:
+
+uIdentify and stop the process that's listening on port 8889 or configure this application to listen on another port.
+
+ü2021-03-16 15:02:03.189  INFO 1232290 --- [    Test worker] o.s.s.concurrent.ThreadPoolTaskExecutor  : Shutting down ExecutorService 'applicationTaskExecutor'
